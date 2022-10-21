@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vue.js Pet Depot</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.7.10/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 </head>
 <body>
     
@@ -13,6 +14,11 @@
         
         <header>
             <h1 v-text="sitename"></h1>
+            <button>
+                {{ cartItemCount }}
+                <span class="fas fa-cart-plus"></span>
+                Checkout
+            </button>
         </header>
         
         <main>
@@ -27,16 +33,18 @@
             
             <!-- The double curly brackets is the shorter version of 'v-text' -->
             <p> Price : {{product.price}} </p>
-            
-            <button v-on:click="addToCart">
+            <p> Stock : {{product.availableInventory}}</p>
+            <button v-on:click = "addToCart" v-if = "canAddToCart">
                 Add To Cart
             </button>
+            <button disabled="disabled" v-else>Add To Cart</button>
+            
         </main>
 
     </div>
 
     <script type = "text/javascript">
-        var web = new Vue ({
+        var webstore = new Vue ({
             el: '#app', //The 'option object' : DOM mounting Point
             data: {
                 sitename:'Vue.js Pet Depot',
@@ -45,14 +53,26 @@
                     title: 'Cat Food, 25lb bag',
                     description: 'A 25 pound bag of <em>irresistable</em>, organic goodness for your cat.',
                     price: 2000,
-                    image: "images/Cat03.jpg" 
+                    image: "images/Cat03.jpg",
+                    availableInventory: 5 
                 },
                 cart: [] //Array to store the items in shopping cart
             },
             methods: {
                 addToCart: function() {
                     this.cart.push(this.product.id);
-                    console.log(this.cart);
+                    //console.log(this.cart);
+                }
+                /* showCheckout() {
+                    this.showProduct =  this.showProduct ? false : true;
+                } */
+            },
+            computed:{
+                cartItemCount: function() {
+                    return this.cart.length || '';
+                },
+                canAddToCart: function() {
+                    return this.product.availableInventory > this.cartItemCount;
                 }
             }
         })
